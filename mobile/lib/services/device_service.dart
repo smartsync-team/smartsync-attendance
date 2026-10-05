@@ -4,7 +4,6 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 /// BLE UUIDs — must match firmware/src/config.h.
 class DeviceProtocol {
@@ -67,19 +66,13 @@ class DeviceService extends ChangeNotifier {
   Stream<bool> get isScanning => FlutterBluePlus.isScanning;
 
   /// Returns an error message, or null when Bluetooth is ready to use.
+  ///
+  /// Bluetooth permissions are requested by flutter_blue_plus itself the
+  /// first time we scan or connect, so no separate permission plugin is needed.
   Future<String?> prepareBluetooth() async {
     if (kIsWeb) return 'Bluetooth devices are not available in the browser. Use the demo device.';
     if (await FlutterBluePlus.isSupported == false) return 'This phone does not support Bluetooth LE.';
     if (defaultTargetPlatform == TargetPlatform.android) {
-      final result = await [
-        Permission.bluetoothScan,
-        Permission.bluetoothConnect,
-        Permission.locationWhenInUse, // only needed on Android 11 and older
-      ].request();
-      if (result[Permission.bluetoothScan]?.isGranted != true ||
-          result[Permission.bluetoothConnect]?.isGranted != true) {
-        return 'Bluetooth permission is needed to find the fingerprint device.';
-      }
       if (FlutterBluePlus.adapterStateNow != BluetoothAdapterState.on) {
         try {
           await FlutterBluePlus.turnOn();
