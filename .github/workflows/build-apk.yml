@@ -16,6 +16,11 @@ on:
     paths: ['mobile/**', '.github/workflows/build-apk.yml']
   workflow_dispatch:
 
+# A newer push cancels an older build that is still waiting or running.
+concurrency:
+  group: build-apk-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
