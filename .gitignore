@@ -1,0 +1,14 @@
+# Secrets
+mobile/env.json
+mobile/android/key.properties
+*.jks
+*.keystore
+
+# PlatformIO
+firmware/.pio/
+firmware/.vscode/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
